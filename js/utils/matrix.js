@@ -1,9 +1,15 @@
 var MatrixOps = (function() {
     function createMatrix(rows, cols, defaultValue) {
         if (defaultValue === undefined) defaultValue = 0;
-        return Array(rows).fill(null).map(function() {
-            return Array(cols).fill(defaultValue);
-        });
+        var result = [];
+        for (var i = 0; i < rows; i++) {
+            var row = [];
+            for (var j = 0; j < cols; j++) {
+                row.push(defaultValue);
+            }
+            result.push(row);
+        }
+        return result;
     }
 
     function matrixAdd(A, B) {

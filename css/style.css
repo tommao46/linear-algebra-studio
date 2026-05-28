@@ -433,7 +433,7 @@ body {
     padding-right: 2rem;
     border-right: 1px solid var(--card-border);
     position: fixed;
-    left: calc((100vw - 1400px) / 2 + 32px);
+    left: max(2rem, calc((100vw - 1400px) / 2 + 32px));
     top: 6rem;
     max-height: calc(100vh - 10rem);
     overflow-y: auto;
