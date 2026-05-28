@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线性代数学习 - Matrix Studio</title>
+    
+    <!-- 外部资源 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav id="navbar" class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <span class="brand-icon">∑</span>
+                <span class="brand-name">Matrix Studio</span>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#/" class="nav-link active" data-route="home">
+                    <i class="fas fa-home"></i> 首页
+                </a></li>
+                <li><a href="#/concepts" class="nav-link" data-route="concepts">
+                    <i class="fas fa-book"></i> 概念学习
+                </a></li>
+                <li><a href="#/visualization" class="nav-link" data-route="visualization">
+                    <i class="fas fa-paint-brush"></i> 可视化
+                </a></li>
+                <li><a href="#/calculator" class="nav-link" data-route="calculator">
+                    <i class="fas fa-calculator"></i> 计算器
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main id="page-container" class="main-content">
+        <!-- 页面内容将通过 JavaScript 动态加载 -->
+    </main>
+
+    <!-- 粒子背景 -->
+    <div id="particles" class="particles-container"></div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Matrix Studio - 让线性代数更直观</p>
+        </div>
+    </footer>
+
+    <!-- 工具库 -->
+    <script src="js/utils/matrix.js"></script>
+    <script src="js/utils/animation.js"></script>
+    
+    <!-- 组件 -->
+    <script src="js/components/navbar.js"></script>
+    
+    <!-- 页面 -->
+    <script src="js/pages/home.js"></script>
+    <script src="js/pages/concepts.js"></script>
+    <script src="js/pages/visualization.js"></script>
+    <script src="js/pages/calculator.js"></script>
+    
+    <!-- 路由 -->
+    <script src="js/router.js"></script>
+    
+    <!-- 主入口 -->
+    <script src="js/main.js"></script>
+</body>
+</html>
