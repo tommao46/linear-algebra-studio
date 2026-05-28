@@ -432,6 +432,11 @@ body {
     flex-shrink: 0;
     padding-right: 2rem;
     border-right: 1px solid var(--card-border);
+    position: fixed;
+    left: calc((100vw - 1400px) / 2 + 32px);
+    top: 6rem;
+    max-height: calc(100vh - 10rem);
+    overflow-y: auto;
 }
 
 .sidebar-title {
@@ -472,6 +477,7 @@ body {
 
 .concept-content {
     flex: 1;
+    margin-left: 300px;
     padding-left: 2rem;
     min-width: 0;
 }
@@ -890,6 +896,8 @@ body {
     
     .sidebar {
         width: 100%;
+        position: static;
+        left: auto;
         border-right: none;
         border-bottom: 1px solid var(--card-border);
         padding-right: 0;
@@ -899,6 +907,7 @@ body {
     
     .concept-content {
         padding-left: 0;
+        margin-left: 0;
     }
     
     .visualization-container {
