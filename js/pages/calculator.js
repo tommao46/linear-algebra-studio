@@ -316,7 +316,9 @@ var CalculatorPage = (function() {
             var rows = state.result.length;
             var cols = state.result[0].length;
             var size = getCellSize(cols);
-            var html = '<div class="matrix-wrapper responsive-matrix"><table class="matrix-content">';
+            var html = '<div class="matrix-wrapper responsive-matrix">' +
+                '<span class="matrix-bracket">[</span>' +
+                '<table class="matrix-content">';
             for (var i = 0; i < rows; i++) {
                 html += '<tr>';
                 for (var j = 0; j < cols; j++) {
@@ -324,7 +326,9 @@ var CalculatorPage = (function() {
                 }
                 html += '</tr>';
             }
-            html += '</table></div>';
+            html += '</table>' +
+                '<span class="matrix-bracket">]</span>' +
+                '</div>';
             container.innerHTML = html;
         }
     }
