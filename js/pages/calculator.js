@@ -25,12 +25,12 @@ var CalculatorPage = (function() {
                     '<div class="calculator-section">' +
                         '<h3 class="calculator-title">矩阵 A</h3>' +
                         '<div class="dimension-selector"><span class="dimension-label">行数:</span><select class="dimension-select" id="a-rows">' + options12345 + '</select><span class="dimension-label" style="margin-left: 1rem;">列数:</span><select class="dimension-select" id="a-cols">' + options12345 + '</select></div>' +
-                        '<div id="matrix-a-grid" class="matrix-grid"></div>' +
+                        '<div id="matrix-a-grid" class="matrix-grid responsive-matrix"></div>' +
                     '</div>' +
                     '<div class="calculator-section">' +
                         '<h3 class="calculator-title">矩阵 B</h3>' +
                         '<div class="dimension-selector"><span class="dimension-label">行数:</span><select class="dimension-select" id="b-rows">' + options12345 + '</select><span class="dimension-label" style="margin-left: 1rem;">列数:</span><select class="dimension-select" id="b-cols">' + options12345 + '</select></div>' +
-                        '<div id="matrix-b-grid" class="matrix-grid"></div>' +
+                        '<div id="matrix-b-grid" class="matrix-grid responsive-matrix"></div>' +
                     '</div>' +
                 '</div>' +
                 '<div class="calculator-section" style="margin-top: 2rem;">' +
@@ -112,9 +112,18 @@ var CalculatorPage = (function() {
         });
     }
 
+    function getCellSize(cols) {
+        if (cols <= 3) return { width: '60px', fontSize: '1rem', padding: '0.5rem' };
+        if (cols === 4) return { width: '50px', fontSize: '0.9rem', padding: '0.4rem' };
+        return { width: '42px', fontSize: '0.8rem', padding: '0.35rem' };
+    }
+
     function renderMatrices() {
         var gridA = document.getElementById('matrix-a-grid');
         var gridB = document.getElementById('matrix-b-grid');
+        
+        var sizeA = getCellSize(state.matrixACols);
+        var sizeB = getCellSize(state.matrixBCols);
         
         if (gridA) {
             gridA.innerHTML = '';
@@ -129,6 +138,9 @@ var CalculatorPage = (function() {
                     cell.dataset.matrix = 'a';
                     cell.dataset.row = i;
                     cell.dataset.col = j;
+                    cell.style.width = sizeA.width;
+                    cell.style.fontSize = sizeA.fontSize;
+                    cell.style.padding = sizeA.padding;
                     cell.addEventListener('input', function() {
                         var matrix = this.dataset.matrix;
                         var r = parseInt(this.dataset.row);
@@ -159,6 +171,9 @@ var CalculatorPage = (function() {
                     cell2.dataset.matrix = 'b';
                     cell2.dataset.row = k;
                     cell2.dataset.col = l;
+                    cell2.style.width = sizeB.width;
+                    cell2.style.fontSize = sizeB.fontSize;
+                    cell2.style.padding = sizeB.padding;
                     cell2.addEventListener('input', function() {
                         var matrix = this.dataset.matrix;
                         var r = parseInt(this.dataset.row);
@@ -298,11 +313,14 @@ var CalculatorPage = (function() {
         if (typeof state.result === 'number') {
             container.innerHTML = '<div class="result-matrix" style="font-size: 1.5rem;">' + state.result + '</div>';
         } else if (Array.isArray(state.result)) {
-            var html = '<div class="matrix-wrapper"><table class="matrix-content">';
-            for (var i = 0; i < state.result.length; i++) {
+            var rows = state.result.length;
+            var cols = state.result[0].length;
+            var size = getCellSize(cols);
+            var html = '<div class="matrix-wrapper responsive-matrix"><table class="matrix-content">';
+            for (var i = 0; i < rows; i++) {
                 html += '<tr>';
-                for (var j = 0; j < state.result[i].length; j++) {
-                    html += '<td>' + Number(state.result[i][j]).toFixed(2) + '</td>';
+                for (var j = 0; j < cols; j++) {
+                    html += '<td style="font-size: ' + size.fontSize + '; padding: ' + size.padding + ';">' + Number(state.result[i][j]).toFixed(2) + '</td>';
                 }
                 html += '</tr>';
             }

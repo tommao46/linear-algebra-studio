@@ -422,7 +422,7 @@ body {
 .concepts-page {
     display: flex;
     min-height: calc(100vh - 180px);
-    padding: 2rem;
+    padding: 4rem 2rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -538,7 +538,7 @@ body {
 
 .visualization-page {
     min-height: calc(100vh - 180px);
-    padding: 2rem;
+    padding: 4rem 2rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -673,7 +673,7 @@ body {
 
 .calculator-page {
     min-height: calc(100vh - 180px);
-    padding: 2rem;
+    padding: 4rem 2rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -1076,4 +1076,69 @@ body {
     .app-icon {
         align-self: flex-start;
     }
+}
+
+/* 动画控件样式 */
+.animation-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 255, 136, 0.05);
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+}
+
+.animate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    color: var(--primary-dark);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.animate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--glow-green);
+}
+
+.animation-info {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+/* 响应式矩阵输入框 */
+.responsive-matrix {
+    overflow-x: auto;
+    max-width: 100%;
+    padding-bottom: 0.5rem;
+}
+
+.matrix-grid .matrix-row {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+/* 原始位置的虚线框样式 */
+.original-square {
+    pointer-events: none;
+}
+
+/* 动画按钮增强 */
+.animate-btn i {
+    font-size: 1.1rem;
 }

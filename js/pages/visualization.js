@@ -2,6 +2,12 @@ var VisualizationPage = (function() {
     var canvas = null;
     var ctx = null;
     var animationId = null;
+    var isAnimating = false;
+    var animationStartMatrix = null;
+    var animationEndMatrix = null;
+    var animationProgress = 0;
+    var animationDuration = 1000;
+    var animationStartTime = null;
     
     var params = {
         rotation: 0,
@@ -19,13 +25,14 @@ var VisualizationPage = (function() {
                 '<div class="visualization-container">' +
                     '<div class="canvas-container"><canvas id="transformCanvas" class="transform-canvas"></canvas></div>' +
                     '<div class="controls-panel">' +
+                        '<div class="animation-controls"><button class="animate-btn" id="animate-btn"><i class="fas fa-play"></i> 播放动画演示</button><div class="animation-info" id="animation-info">点击预设按钮查看矩阵变化动画</div></div>' +
                         '<div class="control-group"><label class="control-label">旋转变换 (°)</label><div class="slider-container"><input type="range" class="slider" id="rotation-slider" min="-180" max="180" value="0"><span class="slider-value" id="rotation-value">0°</span></div></div>' +
                         '<div class="control-group"><label class="control-label">X轴缩放</label><div class="slider-container"><input type="range" class="slider" id="scaleX-slider" min="0" max="3" step="0.1" value="1"><span class="slider-value" id="scaleX-value">1.0</span></div></div>' +
                         '<div class="control-group"><label class="control-label">Y轴缩放</label><div class="slider-container"><input type="range" class="slider" id="scaleY-slider" min="0" max="3" step="0.1" value="1"><span class="slider-value" id="scaleY-value">1.0</span></div></div>' +
                         '<div class="control-group"><label class="control-label">X轴剪切</label><div class="slider-container"><input type="range" class="slider" id="shearX-slider" min="-2" max="2" step="0.1" value="0"><span class="slider-value" id="shearX-value">0.0</span></div></div>' +
                         '<div class="control-group"><label class="control-label">Y轴剪切</label><div class="slider-container"><input type="range" class="slider" id="shearY-slider" min="-2" max="2" step="0.1" value="0"><span class="slider-value" id="shearY-value">0.0</span></div></div>' +
                         '<div class="control-group"><label class="control-label">自定义矩阵</label><div class="matrix-inputs"><input type="number" class="matrix-input" id="m00" value="1" step="0.1"><input type="number" class="matrix-input" id="m01" value="0" step="0.1"><input type="number" class="matrix-input" id="m10" value="0" step="0.1"><input type="number" class="matrix-input" id="m11" value="1" step="0.1"></div></div>' +
-                        '<div class="control-group"><label class="control-label">预设变换</label><div class="preset-buttons"><button class="preset-btn" data-preset="identity">单位矩阵</button><button class="preset-btn" data-preset="rotate90">旋转90°</button><button class="preset-btn" data-preset="flipX">X轴镜像</button><button class="preset-btn" data-preset="flipY">Y轴镜像</button><button class="preset-btn" data-preset="stretch">拉伸</button><button class="preset-btn" data-preset="shear">剪切</button></div></div>' +
+                        '<div class="control-group"><label class="control-label">预设变换（点击查看动画）</label><div class="preset-buttons"><button class="preset-btn" data-preset="identity">单位矩阵</button><button class="preset-btn" data-preset="rotate90">旋转90°</button><button class="preset-btn" data-preset="flipX">X轴镜像</button><button class="preset-btn" data-preset="flipY">Y轴镜像</button><button class="preset-btn" data-preset="stretch">拉伸</button><button class="preset-btn" data-preset="shear">剪切</button></div></div>' +
                         '<div class="control-group"><label class="control-label">变换矩阵</label><div class="result-display" style="min-height: auto; padding: 1rem;"><div id="current-matrix" class="result-matrix">[1, 0]<br>[0, 1]</div></div></div>' +
                     '</div>' +
                 '</div>' +
@@ -94,14 +101,28 @@ var VisualizationPage = (function() {
             btn.addEventListener('click', function() {
                 var preset = btn.dataset.preset;
                 if (presets[preset]) {
-                    params.matrix = presets[preset].map(function(row) {
+                    var targetMatrix = presets[preset].map(function(row) {
                         return row.slice();
                     });
-                    applyMatrixToInputs();
-                    updateMatrixDisplay();
+                    startMatrixAnimation(targetMatrix);
                 }
             });
         });
+
+        var animateBtn = document.getElementById('animate-btn');
+        if (animateBtn) {
+            animateBtn.addEventListener('click', function() {
+                var demoMatrices = [
+                    [[1, 0], [0, 1]],
+                    [[0, -1], [1, 0]],
+                    [[-1, 0], [0, 1]],
+                    [[2, 0], [0, 0.5]],
+                    [[1, 0.5], [0, 1]],
+                    [[1, 0], [0, 1]]
+                ];
+                playDemoAnimation(demoMatrices);
+            });
+        }
 
         window.addEventListener('resize', function() {
             if (canvas) {
@@ -112,7 +133,71 @@ var VisualizationPage = (function() {
         });
     }
 
+    function startMatrixAnimation(targetMatrix) {
+        animationStartMatrix = params.matrix.map(function(row) { return row.slice(); });
+        animationEndMatrix = targetMatrix;
+        animationProgress = 0;
+        isAnimating = true;
+        animationStartTime = performance.now();
+        updateAnimationInfo('动画中...');
+    }
+
+    function playDemoAnimation(matrices) {
+        var currentIdx = 0;
+        function animateNext() {
+            if (currentIdx >= matrices.length) {
+                updateAnimationInfo('演示完成！');
+                return;
+            }
+            animationStartMatrix = params.matrix.map(function(row) { return row.slice(); });
+            animationEndMatrix = matrices[currentIdx];
+            animationProgress = 0;
+            isAnimating = true;
+            animationStartTime = performance.now();
+            currentIdx++;
+            updateAnimationInfo('演示 ' + currentIdx + '/' + matrices.length);
+            
+            setTimeout(animateNext, animationDuration + 300);
+        }
+        animateNext();
+    }
+
+    function updateAnimationProgress() {
+        if (!isAnimating) return;
+        
+        var elapsed = performance.now() - animationStartTime;
+        animationProgress = Math.min(elapsed / animationDuration, 1);
+        
+        var t = easeInOutCubic(animationProgress);
+        
+        params.matrix[0][0] = animationStartMatrix[0][0] + (animationEndMatrix[0][0] - animationStartMatrix[0][0]) * t;
+        params.matrix[0][1] = animationStartMatrix[0][1] + (animationEndMatrix[0][1] - animationStartMatrix[0][1]) * t;
+        params.matrix[1][0] = animationStartMatrix[1][0] + (animationEndMatrix[1][0] - animationStartMatrix[1][0]) * t;
+        params.matrix[1][1] = animationStartMatrix[1][1] + (animationEndMatrix[1][1] - animationStartMatrix[1][1]) * t;
+        
+        applyMatrixToInputs();
+        updateMatrixDisplay();
+        
+        if (animationProgress >= 1) {
+            isAnimating = false;
+            updateAnimationInfo('动画完成');
+        }
+    }
+
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function updateAnimationInfo(text) {
+        var info = document.getElementById('animation-info');
+        if (info) {
+            info.textContent = text;
+        }
+    }
+
     function updateTransformationMatrix() {
+        if (isAnimating) return;
+        
         var rotation = MatrixOps.createRotationMatrix(params.rotation);
         var scale = MatrixOps.createScaleMatrix(params.scaleX, params.scaleY);
         var shear = MatrixOps.createShearMatrix(params.shearX, params.shearY);
@@ -150,6 +235,7 @@ var VisualizationPage = (function() {
         }
         
         function animate() {
+            updateAnimationProgress();
             draw();
             animationId = requestAnimationFrame(animate);
         }
@@ -206,8 +292,8 @@ var VisualizationPage = (function() {
         ctx.lineTo(centerX + axisY2[0] * scale, centerY - axisY2[1] * scale);
         ctx.stroke();
 
-        var square = [[0, 0], [2, 0], [2, 2], [0, 2]];
-        var transformedSquare = square.map(function(p) {
+        var originalSquare = [[0, 0], [2, 0], [2, 2], [0, 2]];
+        var transformedSquare = originalSquare.map(function(p) {
             return transformPoint(p);
         });
         
@@ -222,6 +308,18 @@ var VisualizationPage = (function() {
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(centerX + 2 * scale, centerY);
+        ctx.lineTo(centerX + 2 * scale, centerY - 2 * scale);
+        ctx.lineTo(centerX, centerY - 2 * scale);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.setLineDash([]);
 
         var iVec = transformPoint([1, 0]);
         var jVec = transformPoint([0, 1]);
